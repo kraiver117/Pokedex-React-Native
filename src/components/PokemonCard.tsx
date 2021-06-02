@@ -4,6 +4,7 @@ import { SimplePokemon } from '../interface/pokemonInterfaces';
 import { FadeInImage } from './FadeInImage';
 // import { getImageColors } from '../helpers/getColors';
 import ImageColors from 'react-native-image-colors';
+import { useNavigation } from '@react-navigation/core';
 
 
 const windowWidth =  Dimensions.get('window').width;
@@ -15,6 +16,7 @@ interface Props {
 export const PokemonCard = ({ pokemon }: Props) => {
     const [bgColor, setBgColor] = useState('grey');
     const isMounted = useRef(true);
+    const { navigate } = useNavigation();
     
     // const getColors = async () => {
     //     const [primary = 'red'] = await getImageColors(pokemon.picture);
@@ -28,7 +30,7 @@ export const PokemonCard = ({ pokemon }: Props) => {
             .then(colors => {
 
                 if (!isMounted.current) return;
-                
+
                 (colors.platform === 'android')
                     ? setBgColor(colors.dominant)
                     : setBgColor(colors.primary)
@@ -41,7 +43,15 @@ export const PokemonCard = ({ pokemon }: Props) => {
     }, []);
 
     return (
-        <TouchableOpacity>
+        <TouchableOpacity
+            activeOpacity={ 0.9 }
+            onPress={
+                () => navigate('PokemonDetails', { 
+                    simplePokemon: pokemon,
+                    color: bgColor
+                })
+            }
+        >
             <View style={{
                 ...styles.cardContainer,
                 width: windowWidth * 0.4,
