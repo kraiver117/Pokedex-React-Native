@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 import { SimplePokemon } from '../interface/pokemonInterfaces';
 import { FadeInImage } from './FadeInImage';
+// import { getImageColors } from '../helpers/getColors';
+import ImageColors from 'react-native-image-colors';
+
 
 const windowWidth =  Dimensions.get('window').width;
 
@@ -10,11 +13,30 @@ interface Props {
 }
 
 export const PokemonCard = ({ pokemon }: Props) => {
+    const [bgColor, setBgColor] = useState('grey');
+
+    // const getColors = async () => {
+    //     const [primary = 'red'] = await getImageColors(pokemon.picture);
+    //     setBgColor(primary);
+    // }
+    
+    useEffect(() => {
+        // getColors();
+
+        ImageColors.getColors(pokemon.picture, { fallback: 'grey' })
+            .then(colors => {
+                (colors.platform === 'android')
+                    ? setBgColor(colors.dominant)
+                    : setBgColor(colors.primary)
+            })
+    }, []);
+
     return (
         <TouchableOpacity>
             <View style={{
                 ...styles.cardContainer,
-                width: windowWidth * 0.4
+                width: windowWidth * 0.4,
+                backgroundColor: bgColor
             }}>
                 {/* Nombre del pokemon y ID */}
                 <Text style={{...styles.name, marginHorizontal: 18, marginVertical: 3 }}>
@@ -39,7 +61,6 @@ export const PokemonCard = ({ pokemon }: Props) => {
 const styles = StyleSheet.create({
     cardContainer: {
         marginHorizontal: 10,
-        backgroundColor: 'red',
         height: 120,
         margin: 25,
         borderRadius: 10,
