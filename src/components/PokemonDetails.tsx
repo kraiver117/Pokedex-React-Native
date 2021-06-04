@@ -104,6 +104,43 @@ export const PokemonDetails = ({ pokemon }: Props ) => {
                     }
                 </View>
             </View>
+
+             {/* Stats */}
+            <View style={ {...styles.container, alignItems: 'center'} }>
+                <Text style={ styles.title }>Stats</Text>
+                <View style={{ }}>
+                    {
+                        pokemon.stats.map( (stat, index) => (
+                            <View  
+                                key={ stat.stat.name + index }
+                                style={{ flexDirection: 'row' }}
+                            >
+                                <Text
+                                    style={{ ...styles.regularText, marginRight: 10, width: 150 }}
+                                >
+                                    { stat.stat.name }
+                                </Text>
+
+                                <Text
+                                    style={{ ...styles.regularText, fontWeight: 'bold' }}
+                                >
+                                    { stat.base_stat }
+                                </Text>
+                            </View>
+                        ))
+                    }
+                </View>
+
+                {/* Final Sprite */}
+                <View style={{ 
+                    marginBottom: 20
+                }}>
+                    <FadeInImage 
+                        uri={ pokemon.sprites.front_default }
+                        style={ styles.basicSprite }
+                    />
+                </View>
+            </View>
             
         </ScrollView>
     );
