@@ -1,10 +1,11 @@
 import React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { RootStackParams } from '../navigator/StackNavigation';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeInImage } from '../components/FadeInImage';
+import { usePokemon } from '../hooks/usePokemon';
 
 interface Props extends StackScreenProps<RootStackParams, 'PokemonDetails'>{};
 
@@ -13,15 +14,17 @@ export const PokemonScreen = ( {navigation, route}: Props ) => {
     const { id, name, picture } = simplePokemon;
     const { top } = useSafeAreaInsets();
 
+    const { isLoading, pokemon } = usePokemon(id);
+
     return (
-        <View>
+        <View style={{ flex: 1 }}>
             {/* Header */}
             <View style={{ 
                 ...styles.headerContainer,
                 backgroundColor: color
             }}>
                 <TouchableOpacity 
-                    onPress={() => navigation.pop() }
+                    onPress={() => navigation.goBack() }
                     activeOpacity={0.8}
                     style={{
                         ...styles.backButton,
@@ -43,7 +46,7 @@ export const PokemonScreen = ( {navigation, route}: Props ) => {
                     { name + '\n' } #{ id }
                 </Text>
 
-                {/* Pokebola blanca */}
+                {/* White Pokeball */}
                 <Image 
                     source={ require('../assets/pokebola-blanca.png') } 
                     style={ styles.pokebola }
@@ -55,6 +58,14 @@ export const PokemonScreen = ( {navigation, route}: Props ) => {
                     style={ styles.pokemonImage }
                 />
 
+            </View>
+
+            {/* Details and Loading */}
+            <View style={ styles.loadingIndicator }>
+                <ActivityIndicator
+                    color={ color }
+                    size={ 50 }
+                />
             </View>
         </View>
     );
@@ -89,5 +100,10 @@ const styles = StyleSheet.create({
         height: 250,
         position: 'absolute',
         bottom: -15
+    },
+    loadingIndicator: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });
