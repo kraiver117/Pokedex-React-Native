@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Platform, View, Text, FlatList, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SearchInput from '../components/SearchInput';
@@ -6,12 +6,30 @@ import { usePokemonSearch } from '../hooks/usePokemonSearch';
 import { styles } from '../theme/appTheme';
 import { PokemonCard } from '../components/PokemonCard';
 import { Loading } from '../components/Loading';
+import { SimplePokemon } from '../interface/pokemonInterfaces';
 
 const screenWidth = Dimensions.get('window').width;
 
 export const SearchScreen = () => {
     const { top } = useSafeAreaInsets();
     const { isFetching, simplePokemonList } = usePokemonSearch();
+
+    const [pokemonFiltered, setPokemonFiltered] = useState<SimplePokemon[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+
+        if (searchTerm.length === 0) {
+            return setPokemonFiltered([]);
+        }
+
+        setPokemonFiltered(
+            simplePokemonList.filter( 
+                (pokemon) => pokemon.name.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) 
+            )
+        );
+        
+    }, [searchTerm]);
 
     if (isFetching) {
         return <Loading />
@@ -23,6 +41,7 @@ export const SearchScreen = () => {
             marginHorizontal: 20
         }}>
             <SearchInput 
+                onDebounce={ setSearchTerm }
                 style={{ 
                     position: 'absolute',
                     zIndex: 999,
@@ -32,7 +51,7 @@ export const SearchScreen = () => {
             />
             
             <FlatList 
-                data={ simplePokemonList }
+                data={ pokemonFiltered }
                 keyExtractor={(pokemon) => pokemon.id}
                 showsVerticalScrollIndicator={ false }
                 numColumns={ 2 }
@@ -47,7 +66,7 @@ export const SearchScreen = () => {
                         ...styles.globalMargin,
                         marginTop: (Platform.OS === 'ios') ? top + 60 : top + 60
                     }}>
-                        Pokedex
+                        { searchTerm }
                     </Text>
                 )}                   
             />

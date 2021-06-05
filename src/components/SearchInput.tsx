@@ -5,16 +5,17 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useDebounce } from '../hooks/useDebounce';
 
 interface Props {
+    onDebounce: ( value: string ) => void;
     style?: StyleProp<ViewStyle>;
 }
 
-const SearchInput = ({ style }: Props) => {
+const SearchInput = ({ style, onDebounce }: Props) => {
     
     const [textValue, setTextValue] = useState('');
     const debounceValue = useDebounce(textValue);
 
     useEffect(() => {
-        console.log({debounceValue});
+        onDebounce(debounceValue);
     }, [debounceValue]);
 
     return (
